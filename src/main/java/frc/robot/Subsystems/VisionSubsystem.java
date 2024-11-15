@@ -66,11 +66,25 @@ public class VisionSubsystem extends SubsystemBase {
    * Get the latest best apriltag target.
    * @return Best target, null if not found.
    */
-  public PhotonTrackedTarget getTarget() {
+  private PhotonTrackedTarget getTarget() {
     return getLatestResult().hasTargets() ? getLatestResult().getBestTarget() : null;
   }
 
+  public HashMap<String,Double> getResults() {
+    HashMap<String,Double> results = new HashMap<>();
+    
+    PhotonTrackedTarget target = getTarget();
+
+    if (target != null) {
+      results.put("pitch",target.getPitch());
+      results.put("yaw",target.getYaw());
+      results.put("skew",target.getSkew());
+    }
+    return results;
+  }
+
   /**
+  
    * Get the target with the corresponding fiducial ID.
    * @param fiducialId The attached ID
    * @return Target, null if not found.
