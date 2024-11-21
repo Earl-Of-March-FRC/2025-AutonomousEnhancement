@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
-import java.util.HashMap;
 
 public class VisionSubsystem extends SubsystemBase {
   private final PhotonCamera camera;
@@ -69,19 +68,6 @@ public class VisionSubsystem extends SubsystemBase {
    */
   private PhotonTrackedTarget getTarget() {
     return getLatestResult().hasTargets() ? getLatestResult().getBestTarget() : null;
-  }
-
-  public HashMap<String,Double> getResults() {
-    HashMap<String,Double> results = new HashMap<>();
-    
-    PhotonTrackedTarget target = getTarget();
-
-    if (target != null) {
-      results.put("pitch",target.getPitch());
-      results.put("yaw",target.getYaw());
-      results.put("skew",target.getSkew());
-    }
-    return results;
   }
 
   /**
