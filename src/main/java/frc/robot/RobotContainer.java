@@ -6,12 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 
 public class RobotContainer { 
+  private final VisionSubsystem visionSub = new VisionSubsystem();
+  private final DrivetrainSubsystem driveSub = new DrivetrainSubsystem();
 
   public RobotContainer() {
-    new VisionSubsystem();
+    
   }
 
 
