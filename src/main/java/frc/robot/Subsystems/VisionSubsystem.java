@@ -66,7 +66,7 @@ public class VisionSubsystem extends SubsystemBase {
    * Get the latest best apriltag target.
    * @return Best target, null if not found.
    */
-  private PhotonTrackedTarget getTarget() {
+  public PhotonTrackedTarget getTarget() {
     return getLatestResult().hasTargets() ? getLatestResult().getBestTarget() : null;
   }
 
@@ -86,6 +86,12 @@ public class VisionSubsystem extends SubsystemBase {
       }
     }
     return null;
+  }
+
+  public boolean hasTarget() {
+    PhotonPipelineResult result = getLatestResult(); 
+    
+    return result.hasTargets();
   }
 
   /**

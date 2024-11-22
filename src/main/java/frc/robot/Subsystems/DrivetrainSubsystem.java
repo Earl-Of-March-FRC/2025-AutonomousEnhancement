@@ -38,11 +38,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left", leftFront.get());
-    SmartDashboard.putNumber("Right", rightFront.get());
   }
 
   public void tankDrive(double leftSpeed,double rightSpeed) {
     drive.tankDrive(leftSpeed, rightSpeed);
+    System.out.println(leftSpeed + ", " + rightSpeed);
   }
 }
