@@ -2,64 +2,58 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Commands.DrivetrainCommands;
+package frc.robot.Commands.ArmCommands;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Subsystems.DrivetrainSubsystem;
+import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 
-public class TargetAlign extends Command {
-  private final DrivetrainSubsystem driveSub;
+public class AlignWithAprilTag extends Command {
+  private final ArmSubsystem armSub;
   private final VisionSubsystem visionSub;
+  
+  private final PIDController controller = new PIDController(0, 0, 0);
 
-  /** Creates a new TankDriveCmd. */
-  public TargetAlign(
-    DrivetrainSubsystem driveSub,
+  /** Creates a new AlignWithAprilTag. */
+  public AlignWithAprilTag(
+    ArmSubsystem armSub,
     VisionSubsystem visionSub
-) {
-    this.driveSub = driveSub;
+  ) {
+    this.armSub = armSub;
     this.visionSub = visionSub;
-    addRequirements(driveSub);
+    addRequirements(armSub);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Auto start");
+    controller.setTolerance(1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double left = 0, right = 0, yaw;
-
     PhotonTrackedTarget target = visionSub.getTarget();
-    if (target != null) {
-      yaw = target.getYaw();
-
-      if (yaw > 0.1) {
-        right = 0.1;
-        left = 0;
-        // System.out.println("left");
-      } else if (yaw < -0.1) {
-        // System.out.println("Right");
-        left = 0.1;
-        right = 0;
-      } else {
-        // System.out.println("Forward");
-        right = 0.25;
-        left = 0.25;
-      }
+    if (target == null) {
+      System.out.println("Arm not moving, no target found.");
+      armSub.setSpeed(0);
+      return;
     }
 
-    driveSub.tankDrive(left, right);
+    armSub.setSpeed(
+      controller.calculate(target.getPitch(), 0)
+    );
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    armSub.stopMotors();
+  }
 
   // Returns true when the command should end.
   @Override

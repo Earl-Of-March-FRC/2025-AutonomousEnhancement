@@ -8,10 +8,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Commands.ArmCommands.AlignWithAprilTag;
 import frc.robot.Commands.DrivetrainCommands.TankDriveCmd;
-import frc.robot.Commands.DrivetrainCommands.TargetAlign;
 import frc.robot.Constants.DriverConstants;
-import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 
@@ -20,27 +20,24 @@ public class RobotContainer {
 
   private final VisionSubsystem visionSub = new VisionSubsystem();
   private final DrivetrainSubsystem driveSub = new DrivetrainSubsystem();
+  private final ArmSubsystem armSub = new ArmSubsystem();
 
   public RobotContainer() {
     driveSub.setDefaultCommand(
-      new TankDriveCmd(driveSub,() -> inputToDrivetrainSpeed(driver.getRawAxis(DriverConstants.LEFT_AXIS)), () -> inputToDrivetrainSpeed(driver.getRawAxis(DriverConstants.RIGHT_AXIS)))
+      new TankDriveCmd(driveSub,() -> driveSub.radicalSpeed(driver.getRawAxis(DriverConstants.LEFT_AXIS)), () -> driveSub.radicalSpeed(driver.getRawAxis(DriverConstants.RIGHT_AXIS)))
     );
+    armSub.setDefaultCommand(Commands.runEnd(() -> {
+      armSub.setSpeed(0);
+    }, () -> {}, armSub));
 
     configureBindings();
   }
 
-  public void configureBindings() {}
+  public void configureBindings() {
+    driver.x().whileTrue(new AlignWithAprilTag(armSub, visionSub));
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No auto routine.");
-  }
-
-  /**
-   * Runs an input through a square root function.
-   * @param input Raw input between -1.0 and 1.0
-   * @return Clamped and calculated output
-   */
-  private double inputToDrivetrainSpeed(double input) {
-    return MathUtil.clamp(Math.signum(input)*(Math.sqrt(Math.abs(input))), -DrivetrainConstants.MAX_MOTOR_SPEED, DrivetrainConstants.MAX_MOTOR_SPEED);
   }
 }

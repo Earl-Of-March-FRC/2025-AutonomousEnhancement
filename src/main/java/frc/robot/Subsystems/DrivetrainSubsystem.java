@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,9 +48,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void simulationPeriodic() {}
 
   public void tankDrive(double leftSpeed,double rightSpeed) {
+    leftSpeed = MathUtil.clamp(leftSpeed, -DrivetrainConstants.MAX_MOTOR_SPEED, DrivetrainConstants.MAX_MOTOR_SPEED);
+    rightSpeed = MathUtil.clamp(rightSpeed, -DrivetrainConstants.MAX_MOTOR_SPEED, DrivetrainConstants.MAX_MOTOR_SPEED);
+
     drive.tankDrive(leftSpeed, rightSpeed);
     
     leftFront.getSimState().setRotorVelocity(leftSpeed);
     rightFront.getSimState().setRotorVelocity(rightSpeed);
+  }
+
+  /**
+   * Runs an input through a squareroot function.
+   * @param input {@code double} Raw input
+   * @return {@code double} Calculated output
+   */
+  public double radicalSpeed(double input) {
+    return Math.signum(input)*(Math.sqrt(Math.abs(input)));
   }
 }

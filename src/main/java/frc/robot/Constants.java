@@ -17,6 +17,13 @@ public class Constants {
     public static final int RIGHT_FRONT_ID = 1;
     public static final int RIGHT_BACK_ID = 2;
   }
+  
+  public static class ArmConstants {
+    public static final int MAX_MOTOR_SPEED = 1;
+
+    public static final int LEFT_ID = 5;
+    public static final int RIGHT_ID = 6;
+  }
 
   public static class DriverConstants {
     public static final int DRIVER_PORT = 0;

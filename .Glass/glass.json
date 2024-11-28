@@ -8,6 +8,9 @@
         "Camera_Module_v1": {
           "open": true
         },
+        "PhotonVision": {
+          "open": true
+        },
         "open": true
       }
     },
@@ -25,8 +28,9 @@
     "visible": true
   },
   "NetworkTables Settings": {
+    "dsClient": false,
     "mode": "Client (NT4)",
-    "port4": 5800,
-    "serverTeam": "10.74.76.11"
+    "port4": 5810,
+    "serverTeam": "127.0.0.1"
   }
 }
