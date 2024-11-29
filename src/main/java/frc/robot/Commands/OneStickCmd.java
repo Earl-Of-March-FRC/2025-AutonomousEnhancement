@@ -4,11 +4,21 @@
 
 package frc.robot.Commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Subsystems.DrivetrainSubsystem;
 
 public class TankDriveCmd extends Command {
+  private DrivetrainSubsystem dSubsystem;
+  private DoubleSupplier leftAxis, rightAxis;
+
   /** Creates a new TankDriveCmd. */
-  public TankDriveCmd() {
+  public TankDriveCmd(DrivetrainSubsystem drivetrainSubsystem, DoubleSupplier leftAxis, DoubleSupplier rightAxis) {
+    this.dSubsystem = drivetrainSubsystem;
+    this.leftAxis = leftAxis;
+    this.rightAxis = rightAxis;
+    addRequirements(dSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -18,7 +28,9 @@ public class TankDriveCmd extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    dSubsystem.allStickDrive(leftAxis.getAsDouble(), rightAxis.getAsDouble());
+  }
 
   // Called once the command ends or is interrupted.
   @Override

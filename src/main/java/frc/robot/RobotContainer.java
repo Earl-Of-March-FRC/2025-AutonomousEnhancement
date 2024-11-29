@@ -5,34 +5,33 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Commands.ApriltagAlign;
-import frc.robot.Commands.TargetAlign;
-import frc.robot.Constants.DriverConstants;
+import frc.robot.Commands.AlignArmToTag;
+import frc.robot.Commands.TankDriveCmd;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 
 public class RobotContainer { 
-
-  private final CommandXboxController driver = new CommandXboxController(DriverConstants.DRIVER_PORT);
+  private final CommandXboxController controller = new CommandXboxController(Constants.DriverConstants.DRIVER_PORT);
 
   private final VisionSubsystem visionSub = new VisionSubsystem();
-  private final DrivetrainSubsystem driveSub = new DrivetrainSubsystem();
+  private final DrivetrainSubsystem driveSubSystem = new DrivetrainSubsystem();
   private final ArmSubsystem armSub = new ArmSubsystem();
 
   public RobotContainer() {
-    driveSub.setDefaultCommand(
-      new TankDriveCmd(driveSub, () -> driveSub.radicalSpeed(driver.getRawAxis(DriverConstants.LEFT_AXIS)), () -> driveSub.radicalSpeed(driver.getRawAxis(DriverConstants.RIGHT_AXIS)))
-    );
+    driveSubSystem.setDefaultCommand(new TankDriveCmd(driveSubSystem, () -> controller.getLeftX(),() -> controller.getLeftY()));
+
+    configureBindings();
   }
 
 
   public Command getAutonomousCommand() {
-    return new TargetAlign(driveSub, visionSub);
+    return Commands.print("null");
   }
 
   public void configureBindings() {
-    driver.x().whileTrue(new ApriltagAlign(armSub, visionSub));
+    controller.axisGreaterThan(1, 0.1).whileTrue(new AlignArmToTag(armSub, visionSub)); // Axis 1 is y-axis, above 0.1 it should trigger
   }
 }

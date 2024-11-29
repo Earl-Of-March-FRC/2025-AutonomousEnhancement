@@ -44,4 +44,27 @@ public class DrivetrainSubsystem extends SubsystemBase {
     drive.tankDrive(leftSpeed, rightSpeed);
     System.out.println(leftSpeed + ", " + rightSpeed);
   }
+
+
+  // Robot being controlled by only the left stick
+  public void allStickDrive(double yawSpeed, double pitchSpeed) {
+    double leftSpeed = yawSpeed + pitchSpeed;
+    double rightSpeed = pitchSpeed - yawSpeed;
+
+    if (leftSpeed > 1.0) {
+      leftSpeed = 1;
+    } else if (leftSpeed < -1) {
+      leftSpeed = -1;
+    }
+
+    if (rightSpeed > 1.0) {
+      rightSpeed = 1;
+    } else if (rightSpeed < -1) {
+      rightSpeed = -1;
+    }
+
+    tankDrive(leftSpeed, rightSpeed);
+
+    
+  }
 }
