@@ -1,10 +1,8 @@
 {
   "HALProvider": {
-    "Other Devices": {
-      "Talon FX (v6)[3]": {
-        "header": {
-          "open": true
-        }
+    "DIO": {
+      "window": {
+        "visible": true
       }
     }
   },
@@ -57,5 +55,8 @@
       "open": true
     },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

@@ -23,6 +23,11 @@ public class Constants {
 
     public static final int LEFT_ID = 5;
     public static final int RIGHT_ID = 6;
+
+    public static final int ENCODER_CHANNEL_A = 0;
+    public static final int ENCODER_CHANNEL_B = 2;
+    public static final int ENCODER_PPR = 2048;
+    public static final double ENCODER_OFFSET = 80.0;
   }
 
   public static class DriverConstants {

@@ -16,7 +16,7 @@ public class AlignWithAprilTag extends Command {
   private final ArmSubsystem armSub;
   private final VisionSubsystem visionSub;
   
-  private final PIDController controller = new PIDController(0, 0, 0);
+  private final PIDController controller = new PIDController(0.04, 0, 0);
 
   /** Creates a new AlignWithAprilTag. */
   public AlignWithAprilTag(

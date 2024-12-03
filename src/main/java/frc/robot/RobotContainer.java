@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Commands.ArmCommands.AlignWithAngle;
 import frc.robot.Commands.ArmCommands.AlignWithAprilTag;
 import frc.robot.Commands.DrivetrainCommands.TankDriveCmd;
 import frc.robot.Constants.DriverConstants;
@@ -35,9 +36,12 @@ public class RobotContainer {
 
   public void configureBindings() {
     driver.x().whileTrue(new AlignWithAprilTag(armSub, visionSub));
+    driver.a().whileTrue(new AlignWithAngle(armSub, () -> 80));
+    driver.b().whileTrue(new AlignWithAngle(armSub, () -> 125));
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No auto routine.");
+    return new AlignWithAprilTag(armSub, visionSub);
+    // return Commands.print("No auto routine.");
   }
 }

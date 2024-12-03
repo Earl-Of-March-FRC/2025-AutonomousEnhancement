@@ -21,13 +21,15 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
-  private final PhotonCamera camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+  private final PhotonCamera camera = new PhotonCamera(NetworkTableInstance.getDefault(), VisionConstants.CAMERA_NAME); // VisionConstants.CAMERA_NAME
   private final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
   private final Transform3d cameraToRobot = new Transform3d(VisionConstants.CAMERA_TO_ROBOT_X, VisionConstants.CAMERA_TO_ROBOT_Y, VisionConstants.CAMERA_TO_ROBOT_Z, new Rotation3d());
 
@@ -58,7 +60,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     //////////////////////////////////////////////////////////////////////
     // PhotonVision
-    currentTarget = getTarget();
+    // currentTarget = getTarget();
 
     if (currentTarget != null) {
       SmartDashboard.putNumber("Vision_Target_ID", currentTarget.getFiducialId());
