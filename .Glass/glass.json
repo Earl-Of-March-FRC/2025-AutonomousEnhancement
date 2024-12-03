@@ -11,11 +11,15 @@
         "PhotonVision": {
           "open": true
         },
+        "camera1": {
+          "open": true
+        },
         "open": true
       }
     },
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/PoseFromAprilTag": "Field2d"
     }
   },
   "NetworkTables Info": {

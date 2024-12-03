@@ -7,12 +7,18 @@ import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
+import org.photonvision.estimation.TargetModel;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -21,14 +27,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
-  private final PhotonCamera camera;
-  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
+  private final PhotonCamera camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+  private final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
   private final Transform3d cameraToRobot = new Transform3d(VisionConstants.CAMERA_TO_ROBOT_X, VisionConstants.CAMERA_TO_ROBOT_Y, VisionConstants.CAMERA_TO_ROBOT_Z, new Rotation3d());
-  private final Field2d simulatedField = new Field2d();
+
+  private final VisionSystemSim visionSim = new VisionSystemSim("Simulation");
+  private final SimCameraProperties cameraSimProperties = new SimCameraProperties();
+  private final PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraSimProperties);
+
+  private PhotonTrackedTarget currentTarget = null;
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem() {
-    camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+    cameraSimProperties.setCalibration(640, 480, new Rotation2d(100));
+    cameraSimProperties.setCalibError(0.25, 0.08);
+    cameraSimProperties.setFPS(30);
+    cameraSimProperties.setAvgLatencyMs(35);
+    cameraSimProperties.setLatencyStdDevMs(5);
+
+    visionSim.addAprilTags(tagLayout);
+    visionSim.addCamera(cameraSim, cameraToRobot);
+
+    cameraSim.enableRawStream(true);
+    cameraSim.enableProcessedStream(true);
+    cameraSim.enableDrawWireframe(true);
   }
 
   @Override
@@ -36,22 +58,28 @@ public class VisionSubsystem extends SubsystemBase {
 
     //////////////////////////////////////////////////////////////////////
     // PhotonVision
-    PhotonTrackedTarget target = getTarget();
+    currentTarget = getTarget();
 
-    if (target != null) {
-      SmartDashboard.putNumber("Vision_Target_ID", target.getFiducialId());
-      SmartDashboard.putNumber("Vision_Target_Yaw", target.getYaw());
-      SmartDashboard.putNumber("Vision_Target_Pitch", target.getPitch());
-      SmartDashboard.putNumber("Vision_Target_Area", target.getArea());
-      SmartDashboard.putNumber("Vision_Target_Skew", target.getSkew());
-
-      Pose3d estimatedPose = estimateRobotPose();
-      if (estimatedPose != null) {
-        simulatedField.setRobotPose(estimatedPose.toPose2d());
-        SmartDashboard.putData("PoseFromAprilTag", simulatedField);
-      }
+    if (currentTarget != null) {
+      SmartDashboard.putNumber("Vision_Target_ID", currentTarget.getFiducialId());
+      SmartDashboard.putNumber("Vision_Target_Yaw", currentTarget.getYaw());
+      SmartDashboard.putNumber("Vision_Target_Pitch", currentTarget.getPitch());
+      SmartDashboard.putNumber("Vision_Target_Area", currentTarget.getArea());
+      SmartDashboard.putNumber("Vision_Target_Skew", currentTarget.getSkew());
+      // Pose3d estimatedPose = estimateRobotPose();
+      // if (estimatedPose != null) {
+      //   simulatedField.setRobotPose(estimatedPose.toPose2d());
+      //   SmartDashboard.putData("PoseFromAprilTag", simulatedField);
+      // }
     }
     //////////////////////////////////////////////////////////////////////
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    if (currentTarget != null) {
+      visionSim.update(estimateRobotPose());
+    }
   }
 
   /**
@@ -68,24 +96,6 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public PhotonTrackedTarget getTarget() {
     return getLatestResult().hasTargets() ? getLatestResult().getBestTarget() : null;
-  }
-
-  /**
-  
-   * Get the target with the corresponding fiducial ID.
-   * @param fiducialId The attached ID
-   * @return Target, null if not found.
-   */
-  public PhotonTrackedTarget getTarget(int fiducialId) {
-    PhotonPipelineResult result = getLatestResult();
-    if (result.hasTargets()) {
-      for (PhotonTrackedTarget target : result.getTargets()) {
-        if (target.getFiducialId() == fiducialId) {
-          return target;
-        }
-      }
-    }
-    return null;
   }
 
   public boolean hasTarget() {
@@ -105,7 +115,7 @@ public class VisionSubsystem extends SubsystemBase {
       return null;
     }
 
-    Optional<Pose3d> tagPose = aprilTagFieldLayout.getTagPose(target.getFiducialId());
+    Optional<Pose3d> tagPose = tagLayout.getTagPose(target.getFiducialId());
     if (tagPose.isEmpty()) {
       return null;
     }
