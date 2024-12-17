@@ -17,8 +17,8 @@ import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
   
-  private final WPI_TalonSRX rightLift = new WPI_TalonSRX(ArmConstants.LEFT_MOTOR_ID);
-  private final WPI_TalonSRX leftLift = new WPI_TalonSRX(ArmConstants.RIGHT_MOTOR_ID);
+  private final WPI_TalonSRX rightLift = new WPI_TalonSRX(ArmConstants.LEFT_ID);
+  private final WPI_TalonSRX leftLift = new WPI_TalonSRX(ArmConstants.RIGHT_ID);
 
   private final Encoder encoder = new Encoder(0, 2);
 
@@ -42,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    rightLift.set(MathUtil.clamp(speed, -ArmConstants.MAX_SPEED, ArmConstants.MAX_SPEED));
+    rightLift.set(MathUtil.clamp(speed, -ArmConstants.MAX_MOTOR_SPEED, ArmConstants.MAX_MOTOR_SPEED));
   }
 
   public double getArmPosition() {

@@ -9,12 +9,12 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 
-public class TankDriveCmd extends Command {
+public class OneStickCmd extends Command {
   private DrivetrainSubsystem dSubsystem;
   private DoubleSupplier leftAxis, rightAxis;
 
   /** Creates a new TankDriveCmd. */
-  public TankDriveCmd(DrivetrainSubsystem drivetrainSubsystem, DoubleSupplier leftAxis, DoubleSupplier rightAxis) {
+  public OneStickCmd(DrivetrainSubsystem drivetrainSubsystem, DoubleSupplier leftAxis, DoubleSupplier rightAxis) {
     this.dSubsystem = drivetrainSubsystem;
     this.leftAxis = leftAxis;
     this.rightAxis = rightAxis;

@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.AlignArmToTag;
-import frc.robot.Commands.TankDriveCmd;
+import frc.robot.Commands.OneStickCmd;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DrivetrainSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
@@ -21,7 +21,7 @@ public class RobotContainer {
   private final ArmSubsystem armSub = new ArmSubsystem();
 
   public RobotContainer() {
-    driveSubSystem.setDefaultCommand(new TankDriveCmd(driveSubSystem, () -> controller.getLeftX(),() -> controller.getLeftY()));
+    driveSubSystem.setDefaultCommand(new OneStickCmd(driveSubSystem, () -> controller.getLeftX(),() -> controller.getLeftY()));
 
     configureBindings();
   }
